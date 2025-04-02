@@ -1,0 +1,18 @@
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\bin\Debug\testingcodehere.exe.config
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\bin\Debug\testingcodehere.exe
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\bin\Debug\testingcodehere.pdb
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.AssemblyReference.cache
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.Properties.Resources.resources
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.GenerateResource.cache
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.CoreCompileInputs.cache
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.exe
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.pdb
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\testingcodehere.exe.config
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\testingcodehere.exe
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\testingcodehere.pdb
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.AssemblyReference.cache
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.Properties.Resources.resources
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.GenerateResource.cache
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.CoreCompileInputs.cache
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.exe
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.pdb
