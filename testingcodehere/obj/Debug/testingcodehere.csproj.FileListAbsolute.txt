@@ -1,0 +1,40 @@
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\bin\Debug\testingcodehere.exe.config
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\bin\Debug\testingcodehere.exe
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\bin\Debug\testingcodehere.pdb
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.AssemblyReference.cache
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.Properties.Resources.resources
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.GenerateResource.cache
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.CoreCompileInputs.cache
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.exe
+C:\Users\21dov\OneDrive\Desktop\IT145\testingcodehere\testingcodehere\obj\Debug\testingcodehere.pdb
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\testingcodehere.exe.config
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\testingcodehere.exe
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\testingcodehere.pdb
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.AssemblyReference.cache
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.Properties.Resources.resources
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.GenerateResource.cache
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.csproj.CoreCompileInputs.cache
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.exe
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingcodehere.pdb
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\Microsoft.Win32.Registry.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.Asio.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.Core.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.Midi.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.Wasapi.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.WinForms.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.WinMM.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\System.Security.AccessControl.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\System.Security.Principal.Windows.dll
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\Microsoft.Win32.Registry.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.Asio.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.Core.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.Midi.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.Wasapi.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.WinForms.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\NAudio.WinMM.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\System.Security.AccessControl.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\bin\Debug\System.Security.Principal.Windows.xml
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\testingc.1DF4F627.Up2Date
+C:\Users\themi\Desktop\final project\final game v2\testingcodehere\testingcodehere\obj\Debug\GameScreenForm.resources
