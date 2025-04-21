@@ -1,0 +1,643 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using System.Xml.Serialization;
+using GameStartScreen;
+using NAudio.Wave;
+
+
+[DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
+public class GameScreenForm : Form
+{
+    private PictureBox jumpingObject;
+    private Panel ground;
+    private Timer jumpTimer;
+    private Timer obstacleTimer;
+    private Timer coinTimer;
+    private Random random;
+    private int jumpSpeed = 10;
+    private int gravity = 4;
+    private bool isJumping = false;
+    private int obstacleSpeed = 10;
+    private int points = 0;
+    private Label scoreLabel;
+    private List<PictureBox> obstacles; // List to manage multiple obstacles
+    private List<PictureBox> coins; // List to manage multiple coins
+    private Button startButton; // Start button
+    private Button exitFullscreenButton; // Exit fullscreen button
+    private Button exitGameButton; // Exit to main menu button
+    private Button muteButton; // Mute button
+    private List<(string Username, int Score)> highScores = new List<(string Username, int Score)>(); // High score list
+    private WaveOutEvent waveOut;
+    private AudioFileReader audioFileReader;
+    private bool isPlaying = false; // Track if the music is currently playing
+    private bool Mute = false;
+    // Variables for tracking animation
+    private int walkImageIndex = 0;
+    private int jumpImageIndex = 0;
+    private List<Image> walkImages = new List<Image>(); // Walking images
+    private List<Image> jumpImages = new List<Image>(); // Jumping images
+
+    public GameScreenForm()
+    {
+        // Initialize the form
+        this.Text = "GOT ANY GRAPES";
+        this.BackColor = Color.SkyBlue;
+
+
+        // Enable full-screen mode
+        this.WindowState = FormWindowState.Maximized;
+        this.FormBorderStyle = FormBorderStyle.None;
+
+        // Create the ground
+        ground = new Panel
+        {
+            BackColor = Color.Green,
+            Height = 50,
+            Dock = DockStyle.Bottom // Ground is fixed at the bottom
+        };
+        this.Controls.Add(ground);
+
+        // Create the jumping object (player)
+        jumpingObject = new PictureBox
+        {
+            BackColor = Color.Red,
+            Width = 50, // Fixed width
+            Height = 50, // Fixed height
+            Left = 100,
+            Top = this.ClientSize.Height - ground.Height - 50 // Align dynamically with the ground
+        };
+        this.Controls.Add(jumpingObject);
+
+        // Initialize random generator
+        random = new Random();
+
+        // Initialize obstacles list
+        obstacles = new List<PictureBox>();
+
+        // Initialize obstacles list
+        coins = new List<PictureBox>();
+
+        // Set up the score label
+        scoreLabel = new Label
+        {
+            Text = "Score: 0",
+            Font = new Font("Arial", 16, FontStyle.Bold),
+            ForeColor = Color.Black,
+            Top = 10,
+            Left = 10,
+            AutoSize = true,
+            Visible = true // Hidden until the game starts
+        };
+        this.Controls.Add(scoreLabel);
+
+        // Add an Exit Fullscreen button
+        exitFullscreenButton = new Button
+        {
+            Text = "Exit Fullscreen",
+            Font = new Font("Arial", 12, FontStyle.Bold),
+            BackColor = Color.Gray,
+            ForeColor = Color.White,
+            Width = 150,
+            Height = 40,
+            Top = 10, // Top-right corner
+            Left = Screen.PrimaryScreen.Bounds.Width - 160
+        };
+        exitFullscreenButton.Click += ExitFullscreenButton_Click;
+        this.Controls.Add(exitFullscreenButton);
+
+        // Add exit to main menu
+        exitGameButton = new Button
+        {
+            Text = "Exit Game",
+            Font = new Font("Arial", 12, FontStyle.Bold),
+            BackColor = Color.Gray,
+            ForeColor = Color.White,
+            Width = 150,
+            Height = 40,
+            Top = 50, // Top-right corner
+            Left = Screen.PrimaryScreen.Bounds.Width - 160
+        };
+        exitGameButton.Click += ExitGameButton_Click;
+        this.Controls.Add(exitGameButton);
+
+        // Mute button added
+        muteButton = new Button
+        {
+            Text = "Mute",
+            Font = new Font("Arial", 12, FontStyle.Bold),
+            BackColor = Color.Gray,
+            ForeColor = Color.White,
+            Width = 150,
+            Height = 40,
+            Top = 90, // Top-right corner
+            Left = Screen.PrimaryScreen.Bounds.Width - 160
+        };
+        muteButton.Click += MuteButton_Click;
+        this.Controls.Add(muteButton);
+
+        // Set up the timer for jump mechanics
+        jumpTimer = new Timer { Interval = 20 }; // 20ms interval
+        jumpTimer.Tick += JumpTimer_Tick;
+
+        // Set up the timer for obstacle movement and spawning
+        obstacleTimer = new Timer { Interval = 20 }; // 20ms interval
+        obstacleTimer.Tick += ObstacleTimer_Tick;
+
+        // Set up the timer for coin movement and spawning
+        coinTimer = new Timer { Interval = 20 }; // 20ms interval
+        coinTimer.Tick += CoinTimer_Tick;
+
+        // Enable KeyDown and suppress default key behavior
+        this.KeyPreview = true;
+        this.KeyDown += JumpingGame_KeyDown;
+        this.PreviewKeyDown += JumpingGame_PreviewKeyDown;
+
+        // Fix positioning when the form resizes
+        this.Resize += OnResize;
+
+        //start game
+        obstacleTimer.Start();
+        coinTimer.Start();
+
+        playMusic("START");
+       
+    }
+    // attempting to cycle through the images for jump and walking for the playable character
+    // Load walking images (9 images)
+  /*  private void LoadWalkImages()
+   {
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0001.png"));
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0002.png"));
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0003.png"));
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0004.png"));
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0005.png"));
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0006.png"));
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0007.png"));
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0008.png"));
+        walkImages.Add(Image.FromFile("GameArt/DuckWalk_0009.png"));
+    }
+
+    // Load jumping images (7 images)
+    private void LoadJumpImages()
+    {
+        jumpImages.Add(Image.FromFile("GameArt/DuckJump_0000.png"));
+        jumpImages.Add(Image.FromFile("GameArt/DuckJump_0001.png"));
+        jumpImages.Add(Image.FromFile("GameArt/DuckJump_0002.png"));
+        jumpImages.Add(Image.FromFile("GameArt/DuckJump_0003.png"));
+        jumpImages.Add(Image.FromFile("GameArt/DuckJump_0004.png"));
+        jumpImages.Add(Image.FromFile("GameArt/DuckJump_0005.png"));
+        jumpImages.Add(Image.FromFile("GameArt/DuckJump_0006.png"));
+        jumpImages.Add(Image.FromFile("GameArt/DuckJump_0007.png"));
+    }
+    private void UpdateCharacterAnimation()
+    {
+        if (isJumping)
+        {
+            // If jumping, cycle through jump images
+            jumpingObject.Image = jumpImages[jumpImageIndex];
+            jumpImageIndex++;
+            if (jumpImageIndex >= jumpImages.Count)
+            {
+                jumpImageIndex = 0;  // Reset to the first jump image once the cycle is complete
+            }
+        }
+        else
+        {
+            // If walking on the ground, cycle through walking images
+            jumpingObject.Image = walkImages[walkImageIndex];
+            walkImageIndex++;
+            if (walkImageIndex >= walkImages.Count)
+            {
+                walkImageIndex = 0;  // Reset to the first walk image once the cycle is complete
+            }
+        }
+    }
+   */
+    private void playMusic(string musicON = "START")
+    {
+        if (musicON.Equals("MUTE"))
+        {
+            if (Mute == false)
+            {
+                Mute = true;
+                playMusic("STOP");
+            }
+            else
+            {
+                Mute = false;
+                playMusic("START");
+            }
+        }
+        if (musicON.Equals("START") && Mute == false)
+        {
+            try
+            {
+                if (waveOut == null) // If no playback instance exists, initialize it
+                {
+                    waveOut = new WaveOutEvent();
+                    string relativePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MP3 File", "backgroundMusic.mp3");
+                    if (!File.Exists(relativePath))
+                    {
+                        MessageBox.Show($"MP3 file not found in: {relativePath}");
+                        return;
+                    }
+                    audioFileReader = new AudioFileReader(relativePath);
+                    waveOut.Init(audioFileReader);
+                }
+
+                if (isPlaying) // If already playing, pause it
+                {
+                    waveOut.Pause();
+                    isPlaying = false;
+
+                }
+                else // If not playing, resume or start playback
+                {
+                    waveOut.Play();
+                    isPlaying = true;
+
+                }
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error playing sound: {ex.Message}");
+            }
+        }
+        if (musicON.Equals("STOP"))
+        {
+            try
+            {
+                if (isPlaying) // If already playing, pause it
+                {
+                    waveOut.Pause();
+                    isPlaying = false;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error playing sound: {ex.Message}");
+            }
+        }
+         
+
+    }
+
+    private void StartButton_Click(object sender, EventArgs e)
+    {
+        // Remove the start button and show the score label
+        startButton.Visible = false;
+    }
+    private void MuteButton_Click(object sender, EventArgs e)
+    {
+        if(muteButton.Text=="Mute")
+        {
+            muteButton.Text = "Unmute";
+        }
+        else
+        {
+           muteButton.Text = "Mute";
+        }
+        playMusic("MUTE");
+
+    }
+    private void ExitFullscreenButton_Click(object sender, EventArgs e)
+    {
+        // Exit full-screen mode
+        this.WindowState = FormWindowState.Normal;
+        this.FormBorderStyle = FormBorderStyle.Sizable;
+        exitFullscreenButton.Visible = false; // Hide the button in windowed mode
+    }
+    private void ExitGameButton_Click(object sender, EventArgs e)
+    {
+        // Exit Game
+        obstacleTimer.Stop();
+        coinTimer.Stop();
+        playMusic("STOP");
+        this.Close();
+        StartScreenForm startScreen = new StartScreenForm(); // Transition to game screen
+        startScreen.ShowDialog();
+    }
+
+    private void JumpingGame_KeyDown(object sender, KeyEventArgs e)
+    {
+        // Handle spacebar for jumping
+        if (e.KeyCode == Keys.Space && !isJumping /*&& startButton.Visible == false*/)
+        {
+            isJumping = true;
+            jumpSpeed = -40; // Updated jump speed for higher jump
+            jumpTimer.Start();
+            e.Handled = true; // Prevent further processing of the key
+        }
+    }
+
+    private void JumpingGame_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+    {
+        // Suppress default behavior for the space key
+        if (e.KeyCode == Keys.Space)
+        {
+            e.IsInputKey = true;
+        }
+    }
+
+    private void JumpTimer_Tick(object sender, EventArgs e)
+    {
+        // Apply gravity and move the jumping object
+        jumpSpeed += gravity;
+        jumpingObject.Top += jumpSpeed;
+
+        // Check if the object lands on the ground
+        if (jumpingObject.Top >= this.ClientSize.Height - ground.Height - jumpingObject.Height)
+        {
+            jumpingObject.Top = this.ClientSize.Height - ground.Height - jumpingObject.Height;
+            isJumping = false;
+            jumpTimer.Stop();
+        }
+    }
+
+    private void ObstacleTimer_Tick(object sender, EventArgs e)
+    {
+        // Move and update obstacles
+        for (int i = obstacles.Count - 1; i >= 0; i--)
+        {
+            PictureBox obstacle = obstacles[i];
+            obstacle.Left -= obstacleSpeed;
+
+            // Check for collision
+            if (jumpingObject.Bounds.IntersectsWith(obstacle.Bounds))
+            {
+                obstacleTimer.Stop();
+                coinTimer.Stop();
+                jumpTimer.Stop();
+                EndGame(); // Call EndGame method when collision occurs
+                return;
+            }
+
+            // Remove obstacle if it goes off-screen
+            if (obstacle.Right < 0)
+            {
+                this.Controls.Remove(obstacle);
+                obstacles.RemoveAt(i);
+            }
+        }
+
+        // Randomly spawn new obstacles
+        if (random.Next(0, 100) < 5) // 5% chance to spawn a new obstacle each tick
+        {
+            CreateObstacle();
+        }
+    }
+    private void CoinTimer_Tick(object sender, EventArgs e)
+    {
+        // Move and update coins
+        for (int i = coins.Count - 1; i >= 0; i--)
+        {
+            PictureBox coin = coins[i];
+            coin.Left -= obstacleSpeed;
+
+            // Check for collision
+            if (jumpingObject.Bounds.IntersectsWith(coin.Bounds))
+            {
+                this.Controls.Remove(coin);
+                coins.RemoveAt(i);
+                points++; // Increase points when a coin is cleared
+                scoreLabel.Text = "Score: " + points; // Update score label
+                return;
+            }
+
+            // Remove coin if it goes off-screen
+            if (coin.Right < 0)
+            {
+                this.Controls.Remove(coin);
+                coins.RemoveAt(i);
+
+            }
+          }
+            // Randomly spawn new coins
+            if (random.Next(0, 100) < 1) // 1% chance to spawn a new coin each tick
+            {
+                CreateCoin();
+            }
+        
+    }
+    private Image LoadImage(string fileName)
+    {
+        string path = Path.Combine(Application.StartupPath, "GameArt", fileName);
+        return Image.FromFile(path);
+    }
+
+    private void CreateObstacle()
+    {
+        // Minimum spacing between obstacles
+        int lastObstacleRight = 0;
+        if (obstacles.Count > 0)
+        {
+            lastObstacleRight = obstacles[obstacles.Count - 1].Right;
+        }
+
+        // Ensure at least 150 pixels of space between obstacles
+        Random r = new Random();
+        int space = r.Next(90, 200);
+        if (lastObstacleRight < this.ClientSize.Width - space)
+        {
+            PictureBox newObstacle = new PictureBox
+            {
+                Image = Image.FromFile("GameArt/lemonEnemyAnim.gif"),
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                Width = 50, // Fixed width
+                Height = 50, // Fixed height
+                Top = this.ClientSize.Height - ground.Height - 50, // Align with ground
+                Left = this.ClientSize.Width // Spawn at the right edge of the screen
+            };
+            obstacles.Add(newObstacle);
+            this.Controls.Add(newObstacle);
+        }
+    }
+    private void CreateCoin()
+    {
+        // Minimum spacing between coin
+        int lastCoinRight = 0;
+        if (coins.Count > 0)
+        {
+            lastCoinRight = coins[coins.Count - 1].Right;
+        }
+
+        // Ensure at least 150 pixels of space between coins
+        Random r = new Random();
+        int space = r.Next(10,20);
+        if (lastCoinRight < this.ClientSize.Width - space)
+        {
+            PictureBox newCoin = new PictureBox
+            {
+                Image = LoadImage("CoinAnimFinal.gif"),
+                BackColor = Color.Transparent,
+                SizeMode = PictureBoxSizeMode.StretchImage,
+
+                Width = 50, // Fixed width
+                Height = 50, // Fixed height
+                Top = this.ClientSize.Height - ground.Height - 150, // Align with ground
+                Left = this.ClientSize.Width // Spawn at the right edge of the screen
+            };
+            coins.Add(newCoin);
+            this.Controls.Add(newCoin);
+        }
+    }
+    private void OnResize(object sender, EventArgs e)
+    {
+        // Dynamically reposition the jumping object if not jumping
+        if (!isJumping)
+        {
+            jumpingObject.Top = this.ClientSize.Height - ground.Height - jumpingObject.Height;
+        }
+
+        // Adjust obstacle positions if needed
+        foreach (var obstacle in obstacles)
+        {
+            obstacle.Top = this.ClientSize.Height - ground.Height - obstacle.Height;
+        }
+    }
+
+    private void EndGame()
+    {
+        playMusic();
+        // Prompt for username
+        string username = PromptForUsername();
+
+        // Add score to high scores
+        if (!string.IsNullOrEmpty(username))
+        {
+            highScores.Add((username, points));
+        }
+
+        // Sort high scores and keep only top 5
+        highScores = highScores.OrderByDescending(x => x.Score).Take(5).ToList();
+
+        // Display high score screen
+        DisplayHighScores();
+    }
+
+    private string PromptForUsername()
+    {
+        // Simple input box to ask for username
+        using (Form inputForm = new Form())
+        {
+            inputForm.Width = 300;
+            inputForm.Height = 150;
+            inputForm.Text = "Enter Username";
+
+            Label promptLabel = new Label { Left = 10, Top = 10, Text = "Enter your username:", AutoSize = true };
+            TextBox inputBox = new TextBox { Left = 10, Top = 40, Width = 260 };
+            Button submitButton = new Button { Text = "Submit", Left = 10, Top = 80, Width = 80 };
+            submitButton.Click += (sender, e) => { inputForm.Close(); };
+
+            inputForm.Controls.Add(promptLabel);
+            inputForm.Controls.Add(inputBox);
+            inputForm.Controls.Add(submitButton);
+
+            inputForm.ShowDialog();
+            return inputBox.Text;
+        }
+    }
+
+    private void DisplayHighScores()
+    {
+        using (Form highScoreForm = new Form())
+        {
+            highScoreForm.Width = 400;
+            highScoreForm.Height = 300;
+            highScoreForm.Text = "High Scores";
+
+            Label titleLabel = new Label
+            {
+                Text = "Top 5 High Scores",
+                Font = new Font("Arial", 16, FontStyle.Bold),
+                AutoSize = true,
+                Top = 10,
+                Left = 10
+            };
+            highScoreForm.Controls.Add(titleLabel);
+
+            int topOffset = 50;
+            foreach (var (Username, Score) in highScores)
+            {
+                Label scoreLabel = new Label
+                {
+                    Text = $"{Username}: {Score}",
+                    AutoSize = true,
+                    Top = topOffset,
+                    Left = 10
+                };
+                highScoreForm.Controls.Add(scoreLabel);
+                topOffset += 30;
+            }
+
+            Button resetButton = new Button
+            {
+                Text = "Restart Game",
+                Left = 10,
+                Top = topOffset,
+                Width = 120
+            };
+            resetButton.Click += (sender, e) =>
+            {
+                highScoreForm.Close();
+                RestartGame();
+            };
+            highScoreForm.Controls.Add(resetButton);
+
+            highScoreForm.ShowDialog();
+        }
+    }
+
+    private void RestartGame()
+    {
+        // Reset points and remove obstacles
+        points = 0;
+        scoreLabel.Text = "Score: 0";
+        foreach (var obstacle in obstacles)
+        {
+            this.Controls.Remove(obstacle);
+        }
+        foreach (var coin in coins)
+        {
+            this.Controls.Remove(coin);
+        }
+        obstacles.Clear();
+        coins.Clear();
+
+        // Reset the jumping object
+        jumpingObject.Top = this.ClientSize.Height - ground.Height - jumpingObject.Height;
+        isJumping = false;
+
+        // Restart timers
+        jumpTimer.Stop();
+        obstacleTimer.Start();
+        coinTimer.Start();
+
+        //restart music
+        playMusic("START"); 
+    }
+
+    private string GetDebuggerDisplay()
+    {
+        return ToString();
+    }
+
+    private void InitializeComponent()
+    {
+            this.SuspendLayout();
+            // 
+            // GameScreenForm
+            // 
+            this.ClientSize = new System.Drawing.Size(548, 486);
+            this.Name = "GameScreenForm";
+            this.ResumeLayout(false);
+
+    }
+}
